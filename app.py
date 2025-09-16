@@ -1,12 +1,12 @@
 import os
 import streamlit as st
 from PIL import Image
-import pytesseract
+#import pytesseract
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.prompts import ChatPromptTemplate
 
-pytesseract.pytesseract.tesseract_cmd = r"C:\Users\d407s798\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
+#pytesseract.pytesseract.tesseract_cmd = r"C:\Users\d407s798\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
 
 INDEX_DIR = "storage/faiss_index"
 
@@ -55,19 +55,19 @@ def main():
     st.markdown("### 📸 Upload a slide or photo to ask about it")
     uploaded_file = st.file_uploader("Upload a PNG or JPG image", type=["png", "jpg", "jpeg"])
 
-    image_text = ""
-    if uploaded_file:
-        st.image(uploaded_file, caption="Uploaded image", use_column_width=True)
-        try:
-            image = Image.open(uploaded_file)
-            image_text = pytesseract.image_to_string(image)
-            if image_text.strip():
-                st.success("Text extracted from image:")
-                st.code(image_text[:1000], language="text")
-            else:
-                st.warning("Could not extract any text from the image.")
-        except Exception as e:
-            st.error(f"Error processing image: {e}")
+    # image_text = ""
+    # if uploaded_file:
+    #     st.image(uploaded_file, caption="Uploaded image", use_column_width=True)
+    #     try:
+    #         image = Image.open(uploaded_file)
+    #         image_text = pytesseract.image_to_string(image)
+    #         if image_text.strip():
+    #             st.success("Text extracted from image:")
+    #             st.code(image_text[:1000], language="text")
+    #         else:
+    #             st.warning("Could not extract any text from the image.")
+    #     except Exception as e:
+    #         st.error(f"Error processing image: {e}")
 
     # Load vector store and LLM
     if "OPENAI_API_KEY" not in st.secrets and not os.getenv("OPENAI_API_KEY"):
@@ -88,8 +88,8 @@ def main():
             st.markdown(msg)
 
     default_prompt = "Ask a question about the course material..."
-    if image_text.strip():
-        default_prompt = "Ask a question about the uploaded image..."
+    # if image_text.strip():
+    #     default_prompt = "Ask a question about the uploaded image..."
 
     user_q = st.chat_input(default_prompt)
     if not user_q:
@@ -102,8 +102,8 @@ def main():
     with st.spinner("Thinking..."):
         # Use image text if available
         full_query = user_q
-        if image_text.strip():
-            full_query = f"The student uploaded an image that says:\n\n{image_text.strip()}\n\nNow answer this question:\n{user_q}"
+        # if image_text.strip():
+        #     full_query = f"The student uploaded an image that says:\n\n{image_text.strip()}\n\nNow answer this question:\n{user_q}"
 
         docs_scores = vs.similarity_search_with_score(full_query, k=retriever_k)
         filtered = [(d, s) for d, s in docs_scores if s <= (1 - threshold)]
