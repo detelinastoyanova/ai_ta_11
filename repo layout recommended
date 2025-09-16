@@ -1,0 +1,12 @@
+ai-ta/
+├─ app.py                   # Streamlit chat app (RAG + citations)
+├─ ingest.py                # One-time (or repeatable) indexing script
+├─ requirements.txt
+├─ data/                    # Your course materials
+│  ├─ slides/               # PDFs (export PPTX→PDF)
+│  ├─ images/               # Solution images (see OCR note below)
+│  └─ text/                 # Optional pre-OCR’d .txt for images
+├─ storage/
+│  └─ faiss_index/          # Built by ingest.py (committed or built on startup)
+└─ .streamlit/
+   └─ secrets.toml          # API keys in Streamlit Cloud
